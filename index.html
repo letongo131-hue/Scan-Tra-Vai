@@ -300,7 +300,7 @@ async function startCamera() {
     document.getElementById('cam-wrap').classList.add('on');
     setStatus('green', 'Ready — hold 10–15cm from barcode');
 
-    startDecoding(video);
+    startDecoding();
 
   } catch (e) {
     console.error('Camera error:', e);
@@ -323,29 +323,30 @@ async function startCamera() {
     document.getElementById('start-btn').textContent = 'Retry camera';
   }
 }
-function startDecoding(video) {
+function startDecoding() {
   if (typeof ZXing === 'undefined') {
-    toast('Decoder not loaded');
+    toast('ZXing decoder not loaded');
     return;
   }
 
   if (reader) {
-    try { reader.reset(); } catch(e) {}
+    try {
+      reader.reset();
+    } catch (e) {}
   }
 
   const hints = new Map();
 
-  // Prioritize strong barcode formats
+  // Use only the formats you actually need
   hints.set(
     ZXing.DecodeHintType.POSSIBLE_FORMATS,
     [
-      ZXing.BarcodeFormat.CODE_128,
-      ZXing.BarcodeFormat.CODE_39,
-      ZXing.BarcodeFormat.EAN_13,
-      ZXing.BarcodeFormat.EAN_8,
-      ZXing.BarcodeFormat.ITF,
-      ZXing.BarcodeFormat.UPC_A,
-      ZXing.BarcodeFormat.UPC_E,
+      ZXing.BarcodeFormat.133874145003,
+      ZXing.BarcodeFormat.cp2144901201,
+      ZXing.BarcodeFormat.CF2144901201,
+      ZXing.BarcodeFormat.7337786,
+      ZXing.BarcodeFormat.WO8793B16101,
+      ZXing.BarcodeFormat.COA039001801,
       ZXing.BarcodeFormat.QR_CODE
     ]
   );
@@ -355,28 +356,39 @@ function startDecoding(video) {
     true
   );
 
-  reader = new ZXing.BrowserMultiFormatReader(hints);
+  reader = new ZXing.BrowserMultiFormatReader();
+  reader.hints = hints;
 
-  reader.decodeFromVideoElement(video, (result, err) => {
-    if (result && !cooldown && !pending) {
-      cooldown = true;
+  reader.decodeFromConstraints(
+    {
+      video: {
+        facingMode: { ideal: "environment" },
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }
+    },
+    'video',
+    (result, err) => {
+      if (result && !cooldown && !pending) {
+        cooldown = true;
 
-      setTimeout(() => {
-        cooldown = false;
-      }, 2500);
+        setTimeout(() => {
+          cooldown = false;
+        }, 2500);
 
-      const format = result.getBarcodeFormat
-        ? result.getBarcodeFormat().toString()
-        : '';
+        const format = result.getBarcodeFormat
+          ? result.getBarcodeFormat().toString()
+          : '';
 
-      handleScan(
-        result.getText(),
-        format.toLowerCase().includes('qr')
-          ? 'QR'
-          : 'Barcode'
-      );
+        handleScan(
+          result.getText(),
+          format.toLowerCase().includes('qr')
+            ? 'QR'
+            : 'Barcode'
+        );
+      }
     }
-  });
+  );
 }
 
 function stopCamera() {
