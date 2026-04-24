@@ -325,20 +325,57 @@ async function startCamera() {
   }
 }
 function startDecoding(video) {
-  if(typeof ZXing==='undefined'){ toast('Decoder not loaded'); return; }
-  reader = new ZXing.BrowserMultiFormatReader(null, {
-    delayBetweenScanAttempts: 100,
-    delayBetweenScanSuccess: 2000
-  });
+  if (typeof ZXing === 'undefined') {
+    toast('Decoder not loaded');
+    return;
+  }
+
+  if (reader) {
+    try { reader.reset(); } catch(e) {}
+  }
+
   const hints = new Map();
-  hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
-  reader.hints = hints;
+
+  // Prioritize strong barcode formats
+  hints.set(
+    ZXing.DecodeHintType.POSSIBLE_FORMATS,
+    [
+      ZXing.BarcodeFormat.CODE_128,
+      ZXing.BarcodeFormat.CODE_39,
+      ZXing.BarcodeFormat.EAN_13,
+      ZXing.BarcodeFormat.EAN_8,
+      ZXing.BarcodeFormat.ITF,
+      ZXing.BarcodeFormat.UPC_A,
+      ZXing.BarcodeFormat.UPC_E,
+      ZXing.BarcodeFormat.QR_CODE
+    ]
+  );
+
+  hints.set(
+    ZXing.DecodeHintType.TRY_HARDER,
+    true
+  );
+
+  reader = new ZXing.BrowserMultiFormatReader(hints);
+
   reader.decodeFromVideoElement(video, (result, err) => {
-    if(result && !cooldown && !pending) {
+    if (result && !cooldown && !pending) {
       cooldown = true;
-      setTimeout(()=>{ cooldown=false; }, 2500);
-      const fmt = result.getBarcodeFormat ? result.getBarcodeFormat().toString() : '';
-      handleScan(result.getText(), fmt.toLowerCase().includes('qr')?'QR':'Barcode');
+
+      setTimeout(() => {
+        cooldown = false;
+      }, 2500);
+
+      const format = result.getBarcodeFormat
+        ? result.getBarcodeFormat().toString()
+        : '';
+
+      handleScan(
+        result.getText(),
+        format.toLowerCase().includes('qr')
+          ? 'QR'
+          : 'Barcode'
+      );
     }
   });
 }
