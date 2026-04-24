@@ -140,7 +140,7 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
       </div>
     </div>
 
-    <button id="start-btn" onclick="startCamera()">Tap to start camera</button>
+    <<button id="start-btn">Tap to start camera</button>
 
     <div class="status-bar" id="status">
       <span class="status-dot" style="background:#ccc"></span>
@@ -246,6 +246,7 @@ function setStatus(color, txt) {
 }
 
 async function startCamera() {
+  alert("camera function started");
   document.getElementById('start-btn').style.display = 'none';
   setStatus('gray', 'Requesting camera access...');
 
@@ -534,6 +535,17 @@ function toast(msg){
   t.textContent=msg; t.classList.add('show');
   clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2500);
 }
+
+  document.addEventListener("DOMContentLoaded", function () {
+  const btn = document.getElementById("start-btn");
+
+  if (btn) {
+    btn.addEventListener("click", function () {
+      console.log("BUTTON CLICKED");
+      startCamera();
+    });
+  }
+});
 </script>
 </body>
 </html>
