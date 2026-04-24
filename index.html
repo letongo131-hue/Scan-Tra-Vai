@@ -132,19 +132,7 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
       <button class="tab" onclick="setMode('manual')">Manual entry</button>
     </div>
   <div id="scan-block">
-  <div class="field-wrap">
-  <div class="field-label">Scan Barcode</div>
-
-  <input
-    class="full-input"
-    id="scanner-input"
-    type="text"
-    placeholder="ZXing scanner will paste barcode here"
-    autofocus
-    onkeydown="if(event.key==='Enter')processScan()"
-  >
-</div>
-
+  
 <button
   id="start-btn"
   class="btn primary"
@@ -232,15 +220,6 @@ document.getElementById('m-wt').addEventListener('input', function(){
   document.getElementById('m-yards-preview').value = isNaN(v)||v<=0 ? '—' : (v*FACTOR).toFixed(2)+' yds';
 });
 
-function focusScannerInput() {
-  const input = document.getElementById("scanner-input");
-  input.focus();
-  input.select();
-
-  setStatus("green", "Ready — scan barcode now");
-  toast("Scanner ready");
-}
-
 function openZXingScanner() {
   setStatus("green", "Opening Barcode Scanner app...");
 
@@ -256,9 +235,8 @@ function openZXingScanner() {
     "end";
 }
   
-function processScan() {
-  const input = document.getElementById("scanner-input");
-  const code = input.value.trim();
+function processScan(scannedCode) {
+  const code = (scannedCode || "").trim();
 
   if (!code) {
     toast("No barcode detected");
@@ -266,12 +244,6 @@ function processScan() {
   }
 
   handleScan(code, "Barcode");
-
-  input.value = "";
-
-  setTimeout(() => {
-    input.focus();
-  }, 100);
 }
   
 function setMode(m) {
@@ -447,10 +419,7 @@ function toast(msg){
   }
 
   if (scannedCode) {
-    document.getElementById("scanner-input").value = scannedCode;
-
-    processScan();
-
+    processScan(scannedCode);
     setStatus("green", "Barcode scanned successfully");
   }
 });
