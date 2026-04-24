@@ -245,7 +245,11 @@ function openZXingScanner() {
   setStatus("green", "Opening Barcode Scanner app...");
 
   window.location.href =
-    "intent://scan/?ret=https://letongo131-hue.github.io/Scan-Tra-Vai/#Intent;" +
+    "intent://scan/?ret=" +
+    encodeURIComponent(
+      "https://letongo131-hue.github.io/Scan-Tra-Vai/?SCAN_RESULT={CODE}"
+    ) +
+    "#Intent;" +
     "scheme=zxing;" +
     "package=com.google.zxing.client.android;" +
     "S.SCAN_MODE=PRODUCT_MODE;" +
@@ -431,15 +435,25 @@ function toast(msg){
   clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2500);
 }
   
-  window.addEventListener("load", function () {
-  const params = new URLSearchParams(window.location.search);
-  const scannedCode = params.get("SCAN_RESULT");
+    window.addEventListener("load", function () {
+  const fullUrl = window.location.href;
+
+  let scannedCode = "";
+
+  if (fullUrl.includes("SCAN_RESULT=")) {
+    scannedCode = decodeURIComponent(
+      fullUrl.split("SCAN_RESULT=")[1].split("&")[0]
+    );
+  }
 
   if (scannedCode) {
-    handleScan(scannedCode, "Barcode");
+    document.getElementById("scanner-input").value = scannedCode;
+
+    processScan();
+
     setStatus("green", "Barcode scanned successfully");
   }
-});;
+});
 </script>
 </body>
 </html>
