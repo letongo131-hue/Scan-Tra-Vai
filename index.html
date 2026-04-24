@@ -245,12 +245,12 @@ function openZXingScanner() {
   setStatus("green", "Opening Barcode Scanner app...");
 
   window.location.href =
-    "intent://scan/#Intent;" +
+    "intent://scan/?ret=https://letongo131-hue.github.io/Scan-Tra-Vai/#Intent;" +
     "scheme=zxing;" +
     "package=com.google.zxing.client.android;" +
     "S.SCAN_MODE=PRODUCT_MODE;" +
     "end";
-}  
+}
   
 function processScan() {
   const input = document.getElementById("scanner-input");
