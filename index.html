@@ -245,99 +245,53 @@ function setStatus(color, txt) {
   document.getElementById('status-txt').textContent = txt;
 }
 
+<!-- Replace your current startCamera() function with this stable mobile-safe version -->
 async function startCamera() {
   document.getElementById('start-btn').style.display = 'none';
   setStatus('gray', 'Requesting camera access...');
 
   try {
-    // Step 1: ask permission first
-    await navigator.mediaDevices.getUserMedia({
-  video: {
-    facingMode: "environment"
-  },
-  audio: false
-});
-    // Step 2: get all cameras
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const videoDevices = devices.filter(d => d.kind === 'videoinput');
-
-    // Step 3: try to find the BEST rear camera (avoid ultra-wide)
-    let selectedCamera = null;
-
-    for (const device of videoDevices) {
-      const label = device.label.toLowerCase();
-
-      if (
-        label.includes('back') ||
-        label.includes('rear') ||
-        label.includes('environment')
-      ) {
-        // avoid ultra-wide / wide-angle if possible
-        if (
-          !label.includes('wide') &&
-          !label.includes('ultra') &&
-          !label.includes('macro')
-        ) {
-          selectedCamera = device;
-          break;
-        }
-      }
+    // Stop previous stream first
+    if (stream) {
+      stream.getTracks().forEach(t => t.stop());
+      stream = null;
     }
 
-    // fallback: use first rear camera found
-    if (!selectedCamera) {
-      selectedCamera = videoDevices.find(d =>
-        d.label.toLowerCase().includes('back')
-      );
-    }
+    // Most stable mobile-safe constraints
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: { ideal: 'environment' },
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      },
+      audio: false
+    });
 
-    // fallback again
-    if (!selectedCamera && videoDevices.length) {
-      selectedCamera = videoDevices[0];
-    }
-
-    let videoConstraints = {
-  width: { ideal: 1920 },
-  height: { ideal: 1080 }
-};
-
-if (selectedCamera && selectedCamera.deviceId) {
-  videoConstraints.deviceId = selectedCamera.deviceId;
-} else {
-  videoConstraints.facingMode = "environment";
-}
-
-stream = await navigator.mediaDevices.getUserMedia({
-  video: videoConstraints,
-  audio: false
-});
     const video = document.getElementById('video');
     video.srcObject = stream;
 
     const track = stream.getVideoTracks()[0];
 
+    // Optional autofocus only if supported
     if (track && track.getCapabilities) {
       try {
         const caps = track.getCapabilities();
-        const settings = {};
+        const advanced = {};
 
-        // continuous autofocus
         if (
           caps.focusMode &&
+          Array.isArray(caps.focusMode) &&
           caps.focusMode.includes('continuous')
         ) {
-          settings.focusMode = 'continuous';
+          advanced.focusMode = 'continuous';
         }
 
-        // DO NOT force zoom
-        // let the lens focus naturally
-
-        if (Object.keys(settings).length) {
+        if (Object.keys(advanced).length) {
           await track.applyConstraints({
-            advanced: [settings]
+            advanced: [advanced]
           });
         }
-      } catch (e) {
+      } catch (err) {
         console.log('Advanced focus not supported');
       }
     }
@@ -345,27 +299,31 @@ stream = await navigator.mediaDevices.getUserMedia({
     await video.play();
 
     document.getElementById('cam-wrap').classList.add('on');
-    setStatus(
-      'green',
-      'Ready — use 10–15cm distance from barcode'
-    );
+    setStatus('green', 'Ready — hold 10–15cm from barcode');
 
     startDecoding(video);
 
   } catch (e) {
-    console.error(e);
+    console.error('Camera error:', e);
 
-    setStatus(
-      'red',
-      'Camera failed — allow permission and retry'
-    );
+    let msg = 'Camera failed.';
+
+    if (e.name === 'NotAllowedError') {
+      msg = 'Permission denied — allow camera access.';
+    } else if (e.name === 'NotFoundError') {
+      msg = 'No camera found on this device.';
+    } else if (e.name === 'NotReadableError') {
+      msg = 'Camera is already used by another app.';
+    } else if (e.name === 'OverconstrainedError') {
+      msg = 'Camera constraints unsupported.';
+    }
+
+    setStatus('red', msg);
 
     document.getElementById('start-btn').style.display = 'block';
-    document.getElementById('start-btn').textContent =
-      'Retry camera';
+    document.getElementById('start-btn').textContent = 'Retry camera';
   }
 }
-
 function startDecoding(video) {
   if(typeof ZXing==='undefined'){ toast('Decoder not loaded'); return; }
   reader = new ZXing.BrowserMultiFormatReader(null, {
