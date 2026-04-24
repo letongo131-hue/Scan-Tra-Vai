@@ -245,7 +245,6 @@ function setStatus(color, txt) {
   document.getElementById('status-txt').textContent = txt;
 }
 
-<!-- Replace your current startCamera() function with this stable mobile-safe version -->
 async function startCamera() {
   document.getElementById('start-btn').style.display = 'none';
   setStatus('gray', 'Requesting camera access...');
