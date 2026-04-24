@@ -252,83 +252,67 @@ async function startCamera() {
   try {
     const constraints = {
       video: {
-        facingMode: { ideal: "environment" },
+        facingMode: "environment",
         width: { ideal: 1920 },
-        height: { ideal: 1080 },
-        advanced: [
-          { focusMode: "continuous" },
-          { sharpness: 1 },
-          { exposureMode: "continuous" }
-        ]
+        height: { ideal: 1080 }
       },
       audio: false
     };
 
     stream = await navigator.mediaDevices.getUserMedia(constraints);
 
-    const video = document.getElementById("video");
+    const video = document.getElementById('video');
     video.srcObject = stream;
 
     const track = stream.getVideoTracks()[0];
-    const capabilities = track.getCapabilities();
 
-    // Apply better focus if supported
-    if (capabilities.focusMode) {
-      await track.applyConstraints({
-        advanced: [{ focusMode: "continuous" }]
-      });
-    }
-
-    // Optional: set zoom if supported
-    if (capabilities.zoom) {
-      await track.applyConstraints({
-        advanced: [{ zoom: capabilities.zoom.min || 1 }]
-      });
-    }
-
-    setStatus("green", "Camera ready");
-
-  } catch (err) {
-    console.error(err);
-    setStatus("red", "Camera access failed");
-  }
-}
-
-    const track = stream.getVideoTracks()[0];
-    if(track && track.getCapabilities) {
+    if (track && track.getCapabilities) {
       try {
         const caps = track.getCapabilities();
-        const settings = {};
-        if(caps.focusMode && caps.focusMode.includes('continuous')) settings.focusMode='continuous';
-        if(caps.zoom) settings.zoom=1;
-        if(Object.keys(settings).length) await track.applyConstraints({advanced:[settings]});
-      } catch(e){}
+        const advancedSettings = {};
+
+        if (caps.focusMode && caps.focusMode.includes('continuous')) {
+          advancedSettings.focusMode = 'continuous';
+        }
+
+        if (caps.zoom) {
+          advancedSettings.zoom = 1;
+        }
+
+        if (Object.keys(advancedSettings).length) {
+          await track.applyConstraints({
+            advanced: [advancedSettings]
+          });
+        }
+      } catch (e) {
+        console.log("Advanced camera settings not supported");
+      }
     }
 
     await video.play();
+
     document.getElementById('cam-wrap').classList.add('on');
-    setStatus('green','Ready — point at barcode or QR code');
+    setStatus('green', 'Ready — point at barcode or QR code');
+
     startDecoding(video);
-  } catch(e) {
+
+  } catch (e) {
+    console.error(e);
+
     let msg = 'Camera error.';
-    if(e.name==='NotAllowedError') msg='Permission denied — allow camera in browser settings then refresh.';
-    else if(e.name==='NotFoundError') msg='No camera found on this device.';
-    else if(e.name==='NotReadableError') msg='Camera in use by another app — close it and retry.';
-    else if(e.name==='OverconstrainedError') {
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}});
-        const video = document.getElementById('video');
-        video.srcObject = stream;
-        await video.play();
-        document.getElementById('cam-wrap').classList.add('on');
-        setStatus('green','Ready — point at barcode or QR code');
-        startDecoding(video);
-        return;
-      } catch(e2){ msg='Could not start camera.'; }
+
+    if (e.name === 'NotAllowedError') {
+      msg = 'Permission denied — allow camera in browser settings.';
+    } else if (e.name === 'NotFoundError') {
+      msg = 'No camera found.';
+    } else if (e.name === 'NotReadableError') {
+      msg = 'Camera is being used by another app.';
     }
+
     setStatus('red', msg);
-    document.getElementById('start-btn').style.display='block';
-    document.getElementById('start-btn').textContent='Retry camera';
+
+    document.getElementById('start-btn').style.display = 'block';
+    document.getElementById('start-btn').textContent = 'Retry camera';
   }
 }
 
