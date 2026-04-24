@@ -252,10 +252,11 @@ async function startCamera() {
   try {
     // Step 1: ask permission first
     await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: false
-    });
-
+  video: {
+    facingMode: "environment"
+  },
+  audio: false
+});
     // Step 2: get all cameras
     const devices = await navigator.mediaDevices.enumerateDevices();
     const videoDevices = devices.filter(d => d.kind === 'videoinput');
@@ -295,17 +296,21 @@ async function startCamera() {
       selectedCamera = videoDevices[0];
     }
 
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        deviceId: selectedCamera
-          ? { exact: selectedCamera.deviceId }
-          : undefined,
-        width: { ideal: 1920 },
-        height: { ideal: 1080 }
-      },
-      audio: false
-    });
+    let videoConstraints = {
+  width: { ideal: 1920 },
+  height: { ideal: 1080 }
+};
 
+if (selectedCamera && selectedCamera.deviceId) {
+  videoConstraints.deviceId = selectedCamera.deviceId;
+} else {
+  videoConstraints.facingMode = "environment";
+}
+
+stream = await navigator.mediaDevices.getUserMedia({
+  video: videoConstraints,
+  audio: false
+});
     const video = document.getElementById('video');
     video.srcObject = stream;
 
