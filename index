@@ -131,20 +131,32 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
       <button class="tab active" onclick="setMode('camera')">Camera scan</button>
       <button class="tab" onclick="setMode('manual')">Manual entry</button>
     </div>
+  <div id="scan-block">
+  <div class="field-wrap">
+  <div class="field-label">Scan Barcode</div>
 
-    <div id="cam-wrap">
-      <video id="video" playsinline autoplay muted></video>
-      <div class="overlay">
-        <div class="corner-box"><div class="corner-tl"></div><div class="scan-line"></div></div>
-        <div class="cam-hint">Hold steady — auto detects</div>
-      </div>
-    </div>
+  <input
+    class="full-input"
+    id="scanner-input"
+    type="text"
+    placeholder="ZXing scanner will paste barcode here"
+    autofocus
+    onkeydown="if(event.key==='Enter')processScan()"
+  >
+</div>
 
-    <button id="start-btn">Tap to start camera</button>
-
+<button
+  id="start-btn"
+  class="btn primary"
+  style="width:100%;padding:14px;margin-bottom:10px"
+  onclick="focusScannerInput()"
+>
+  Tap Here Before Scanning
+</button>
+</div>
     <div class="status-bar" id="status">
       <span class="status-dot" style="background:#ccc"></span>
-      <span id="status-txt">Press button to activate camera</span>
+      <span id="status-txt">Tap button, then scan using Barcode Scanner app</span>
     </div>
 
     <div class="scanned-pill" id="pill">
@@ -205,7 +217,6 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
 <div class="toast" id="toast"></div>
 
-<script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
 <script>
 const FACTOR = 3.5;
 let records = [];
@@ -221,18 +232,43 @@ document.getElementById('m-wt').addEventListener('input', function(){
   document.getElementById('m-yards-preview').value = isNaN(v)||v<=0 ? '—' : (v*FACTOR).toFixed(2)+' yds';
 });
 
+function focusScannerInput() {
+  const input = document.getElementById("scanner-input");
+  input.focus();
+  input.select();
+
+  setStatus("green", "Ready — scan barcode now");
+  toast("Scanner ready");
+}
+
+function processScan() {
+  const input = document.getElementById("scanner-input");
+  const code = input.value.trim();
+
+  if (!code) {
+    toast("No barcode detected");
+    return;
+  }
+
+  handleScan(code, "Barcode");
+
+  input.value = "";
+
+  setTimeout(() => {
+    input.focus();
+  }, 100);
+}
+  
 function setMode(m) {
   mode = m;
   document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',(i===0)===(m==='camera')));
   document.getElementById('mblock').classList.toggle('on', m==='manual');
-  if(m==='manual'){
-    stopCamera();
-    document.getElementById('cam-wrap').classList.remove('on');
-    document.getElementById('start-btn').style.display='none';
+ if(m==='manual'){
+    document.getElementById('scan-block').style.display='none';
     setStatus('','');
     setTimeout(()=>document.getElementById('m-bc').focus(),100);
   } else {
-    document.getElementById('start-btn').style.display='block';
+    document.getElementById('scan-block').style.display='block';
     setStatus('gray','Press button to activate camera');
   }
 }
@@ -243,160 +279,6 @@ function setStatus(color, txt) {
   bar.className = 'status-bar' + (color==='green'?' ok':color==='red'?' err':'');
   dot.style.background = color==='green'?'#2d7a3a':color==='red'?'#c0392b':'#ccc';
   document.getElementById('status-txt').textContent = txt;
-}
-
-async function startCamera() {
-  alert("camera function started");
-  document.getElementById('start-btn').style.display = 'none';
-  setStatus('gray', 'Requesting camera access...');
-
-  try {
-    // Stop previous stream first
-    if (stream) {
-      stream.getTracks().forEach(t => t.stop());
-      stream = null;
-    }
-
-    // Most stable mobile-safe constraints
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: { ideal: 'environment' },
-        width: { ideal: 1280 },
-        height: { ideal: 720 }
-      },
-      audio: false
-    });
-
-    const video = document.getElementById('video');
-    video.srcObject = stream;
-
-    const track = stream.getVideoTracks()[0];
-
-    // Optional autofocus only if supported
-    if (track && track.getCapabilities) {
-      try {
-        const caps = track.getCapabilities();
-        const advanced = {};
-
-        if (
-          caps.focusMode &&
-          Array.isArray(caps.focusMode) &&
-          caps.focusMode.includes('continuous')
-        ) {
-          advanced.focusMode = 'continuous';
-        }
-
-        if (Object.keys(advanced).length) {
-          await track.applyConstraints({
-            advanced: [advanced]
-          });
-        }
-      } catch (err) {
-        console.log('Advanced focus not supported');
-      }
-    }
-
-    await video.play();
-
-    document.getElementById('cam-wrap').classList.add('on');
-    setStatus('green', 'Ready — hold 10–15cm from barcode');
-
-    startDecoding();
-
-  } catch (e) {
-    console.error('Camera error:', e);
-
-    let msg = 'Camera failed.';
-
-    if (e.name === 'NotAllowedError') {
-      msg = 'Permission denied — allow camera access.';
-    } else if (e.name === 'NotFoundError') {
-      msg = 'No camera found on this device.';
-    } else if (e.name === 'NotReadableError') {
-      msg = 'Camera is already used by another app.';
-    } else if (e.name === 'OverconstrainedError') {
-      msg = 'Camera constraints unsupported.';
-    }
-
-    setStatus('red', msg);
-
-    document.getElementById('start-btn').style.display = 'block';
-    document.getElementById('start-btn').textContent = 'Retry camera';
-  }
-}
-function startDecoding() {
-  if (typeof ZXing === 'undefined') {
-    toast('ZXing decoder not loaded');
-    return;
-  }
-
-  if (reader) {
-    try {
-      reader.reset();
-    } catch (e) {}
-  }
-
-  const hints = new Map();
-
-  // Use only the formats you actually need
-  hints.set(
-    ZXing.DecodeHintType.POSSIBLE_FORMATS,
-    [
-    ZXing.BarcodeFormat.CODE_128,
-    ZXing.BarcodeFormat.CODE_39,
-    ZXing.BarcodeFormat.CODE_93,
-    ZXing.BarcodeFormat.EAN_13,
-    ZXing.BarcodeFormat.EAN_8,
-    ZXing.BarcodeFormat.ITF,
-    ZXing.BarcodeFormat.UPC_A,
-    ZXing.BarcodeFormat.UPC_E,
-    ZXing.BarcodeFormat.QR_CODE
-    ]
-  );
-
-  hints.set(
-    ZXing.DecodeHintType.TRY_HARDER,
-    true
-  );
-
-  reader = new ZXing.BrowserMultiFormatReader();
-  reader.hints = hints;
-
-  reader.decodeFromConstraints(
-    {
-      video: {
-        facingMode: { ideal: "environment" },
-        width: { ideal: 1280 },
-        height: { ideal: 720 }
-      }
-    },
-    'video',
-    (result, err) => {
-      if (result && !cooldown && !pending) {
-        cooldown = true;
-
-        setTimeout(() => {
-          cooldown = false;
-        }, 2500);
-
-        const format = result.getBarcodeFormat
-          ? result.getBarcodeFormat().toString()
-          : '';
-
-        handleScan(
-          result.getText(),
-          format.toLowerCase().includes('qr')
-            ? 'QR'
-            : 'Barcode'
-        );
-      }
-    }
-  );
-}
-
-function stopCamera() {
-  if(reader){ try{ reader.reset(); }catch(e){} reader=null; }
-  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
 }
 
 function handleScan(text, type) {
@@ -536,18 +418,7 @@ function toast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg; t.classList.add('show');
   clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2500);
-}
-
-  document.addEventListener("DOMContentLoaded", function () {
-  const btn = document.getElementById("start-btn");
-
-  if (btn) {
-    btn.addEventListener("click", function () {
-      console.log("BUTTON CLICKED");
-      startCamera();
-    });
-  }
-});
+};
 </script>
 </body>
 </html>
