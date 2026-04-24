@@ -211,18 +211,22 @@ let records = JSON.parse(
   localStorage.getItem("scan_records") || "[]"
 );
 
-records = records
-  .map(r => ({
-    ...r,
-    time: r.time ? new Date(r.time) : new Date()
-  }))
-  .filter(r =>
-    r.barcode &&
-    !isNaN(r.weight) &&
-    !isNaN(r.yards) &&
-    r.time instanceof Date &&
-    !isNaN(r.time)
-  );
+records = records.map(r => ({
+  id: r.id || Date.now(),
+  barcode: String(r.barcode || ""),
+  type: r.type || "Barcode",
+  weight: parseFloat(r.weight) || 0,
+  yards: parseFloat(r.yards) || 0,
+  note: r.note || "",
+  time: r.time ? new Date(r.time) : new Date()
+}));
+
+records = records.filter(r =>
+  r.barcode &&
+  r.weight > 0 &&
+  r.yards > 0 &&
+  !isNaN(r.time.getTime())
+);
   
 let pending = null;
 let pendingType = null;
@@ -391,9 +395,19 @@ function renderRecords(){
 }
 
 function updateStats(){
-  document.getElementById('s-count').textContent=records.length;
-  document.getElementById('s-weight').textContent=records.reduce((s,r)=>s+r.weight,0).toFixed(2);
-  document.getElementById('s-yards').textContent=records.reduce((s,r)=>s+r.yards,0).toFixed(2);
+  const totalWeight = records.reduce(
+    (sum, r) => sum + Number(r.weight || 0),
+    0
+  );
+
+  const totalYards = records.reduce(
+    (sum, r) => sum + Number(r.yards || 0),
+    0
+  );
+
+  document.getElementById('s-count').textContent = records.length;
+  document.getElementById('s-weight').textContent = totalWeight.toFixed(2);
+  document.getElementById('s-yards').textContent = totalYards.toFixed(2);
 }
 
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
