@@ -250,16 +250,61 @@ async function startCamera() {
   setStatus('gray', 'Requesting camera access...');
 
   try {
-    const constraints = {
+    // Step 1: ask permission first
+    await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: false
+    });
+
+    // Step 2: get all cameras
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoDevices = devices.filter(d => d.kind === 'videoinput');
+
+    // Step 3: try to find the BEST rear camera (avoid ultra-wide)
+    let selectedCamera = null;
+
+    for (const device of videoDevices) {
+      const label = device.label.toLowerCase();
+
+      if (
+        label.includes('back') ||
+        label.includes('rear') ||
+        label.includes('environment')
+      ) {
+        // avoid ultra-wide / wide-angle if possible
+        if (
+          !label.includes('wide') &&
+          !label.includes('ultra') &&
+          !label.includes('macro')
+        ) {
+          selectedCamera = device;
+          break;
+        }
+      }
+    }
+
+    // fallback: use first rear camera found
+    if (!selectedCamera) {
+      selectedCamera = videoDevices.find(d =>
+        d.label.toLowerCase().includes('back')
+      );
+    }
+
+    // fallback again
+    if (!selectedCamera && videoDevices.length) {
+      selectedCamera = videoDevices[0];
+    }
+
+    stream = await navigator.mediaDevices.getUserMedia({
       video: {
-        facingMode: {exact: "environment"},
+        deviceId: selectedCamera
+          ? { exact: selectedCamera.deviceId }
+          : undefined,
         width: { ideal: 1920 },
         height: { ideal: 1080 }
       },
       audio: false
-    };
-
-    stream = await navigator.mediaDevices.getUserMedia(constraints);
+    });
 
     const video = document.getElementById('video');
     video.srcObject = stream;
@@ -269,63 +314,50 @@ async function startCamera() {
     if (track && track.getCapabilities) {
       try {
         const caps = track.getCapabilities();
-       const advancedSettings = {};
+        const settings = {};
 
-// Continuous autofocus
-if (caps.focusMode && caps.focusMode.includes('continuous')) {
-  advancedSettings.focusMode = 'continuous';
-}
+        // continuous autofocus
+        if (
+          caps.focusMode &&
+          caps.focusMode.includes('continuous')
+        ) {
+          settings.focusMode = 'continuous';
+        }
 
-// Stronger zoom for close barcode scanning
-if (caps.zoom) {
-  const minZoom = caps.zoom.min || 1;
-  const maxZoom = caps.zoom.max || 3;
+        // DO NOT force zoom
+        // let the lens focus naturally
 
-  advancedSettings.zoom = Math.min(
-    Math.max(2.2, minZoom),
-    maxZoom
-  );
-}
-
-// Better torch support if available (optional)
-if (caps.torch) {
-  // advancedSettings.torch = true;
-}
-
-        if (Object.keys(advancedSettings).length) {
+        if (Object.keys(settings).length) {
           await track.applyConstraints({
-            advanced: [advancedSettings]
+            advanced: [settings]
           });
         }
       } catch (e) {
-        console.log("Advanced camera settings not supported");
+        console.log('Advanced focus not supported');
       }
     }
 
     await video.play();
 
     document.getElementById('cam-wrap').classList.add('on');
-    setStatus('green', 'Ready — point at barcode or QR code');
+    setStatus(
+      'green',
+      'Ready — use 10–15cm distance from barcode'
+    );
 
     startDecoding(video);
 
   } catch (e) {
     console.error(e);
 
-    let msg = 'Camera error.';
-
-    if (e.name === 'NotAllowedError') {
-      msg = 'Permission denied — allow camera in browser settings.';
-    } else if (e.name === 'NotFoundError') {
-      msg = 'No camera found.';
-    } else if (e.name === 'NotReadableError') {
-      msg = 'Camera is being used by another app.';
-    }
-
-    setStatus('red', msg);
+    setStatus(
+      'red',
+      'Camera failed — allow permission and retry'
+    );
 
     document.getElementById('start-btn').style.display = 'block';
-    document.getElementById('start-btn').textContent = 'Retry camera';
+    document.getElementById('start-btn').textContent =
+      'Retry camera';
   }
 }
 
