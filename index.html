@@ -246,21 +246,53 @@ function setStatus(color, txt) {
 }
 
 async function startCamera() {
-  document.getElementById('start-btn').style.display='none';
-  setStatus('gray','Requesting camera access...');
+  document.getElementById('start-btn').style.display = 'none';
+  setStatus('gray', 'Requesting camera access...');
+
   try {
     const constraints = {
       video: {
-        facingMode: {ideal:'environment'},
-        width: {ideal:1920, min:1280},
-        height: {ideal:1080, min:720},
-        focusMode: {ideal:'continuous'},
-        zoom: {ideal:1}
-      }
+        facingMode: { ideal: "environment" },
+        width: { ideal: 1920 },
+        height: { ideal: 1080 },
+        advanced: [
+          { focusMode: "continuous" },
+          { sharpness: 1 },
+          { exposureMode: "continuous" }
+        ]
+      },
+      audio: false
     };
+
     stream = await navigator.mediaDevices.getUserMedia(constraints);
-    const video = document.getElementById('video');
+
+    const video = document.getElementById("video");
     video.srcObject = stream;
+
+    const track = stream.getVideoTracks()[0];
+    const capabilities = track.getCapabilities();
+
+    // Apply better focus if supported
+    if (capabilities.focusMode) {
+      await track.applyConstraints({
+        advanced: [{ focusMode: "continuous" }]
+      });
+    }
+
+    // Optional: set zoom if supported
+    if (capabilities.zoom) {
+      await track.applyConstraints({
+        advanced: [{ zoom: capabilities.zoom.min || 1 }]
+      });
+    }
+
+    setStatus("green", "Camera ready");
+
+  } catch (err) {
+    console.error(err);
+    setStatus("red", "Camera access failed");
+  }
+}
 
     const track = stream.getVideoTracks()[0];
     if(track && track.getCapabilities) {
