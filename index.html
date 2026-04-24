@@ -207,7 +207,7 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
 <script>
 const FACTOR = 3.5;
-let records = [];
+let records = JSON.parse(localStorage.getItem("scan_records") || "[]");
 let pending = null;
 let pendingType = null;
 let reader = null;
@@ -220,6 +220,10 @@ document.getElementById('m-wt').addEventListener('input', function(){
   document.getElementById('m-yards-preview').value = isNaN(v)||v<=0 ? '—' : (v*FACTOR).toFixed(2)+' yds';
 });
 
+function saveRecords() {
+  localStorage.setItem("scan_records", JSON.stringify(records));
+}
+  
 function openZXingScanner() {
   setStatus("green", "Opening Barcode Scanner app...");
 
@@ -311,21 +315,40 @@ function addManual() {
 }
 
 function addRecord(barcode,type,weight,note=''){
-  const yards=parseFloat((weight*FACTOR).toFixed(2));
-  records.unshift({id:Date.now(),barcode,type,weight,yards,note,time:new Date()});
-  renderRecords(); updateStats();
-  toast('Added — '+yards.toFixed(2)+' yds');
+  const yards = parseFloat((weight * FACTOR).toFixed(2));
+
+  records.unshift({
+    id: Date.now(),
+    barcode,
+    type,
+    weight,
+    yards,
+    note,
+    time: new Date()
+  });
+
+  saveRecords();   // ADD THIS
+
+  renderRecords();
+  updateStats();
+
+  toast('Added — ' + yards.toFixed(2) + ' yds');
 }
 
 function deleteRecord(id){
-  records=records.filter(r=>r.id!==id);
-  renderRecords(); updateStats();
+  records = records.filter(r => r.id !== id);
+  saveRecords();
+  renderRecords();
+  updateStats();
 }
 
 function clearAll(){
   if(!records.length) return;
-  if(!confirm('Clear all '+records.length+' records?')) return;
-  records=[]; renderRecords(); updateStats();
+  if(!confirm('Clear all ' + records.length + ' records?')) return;
+  records = [];
+  saveRecords();
+  renderRecords();
+  updateStats();
 }
 
 function renderRecords(){
@@ -423,6 +446,8 @@ function toast(msg){
     setStatus("green", "Barcode scanned successfully");
   }
 });
+renderRecords();
+updateStats();
 </script>
 </body>
 </html>
