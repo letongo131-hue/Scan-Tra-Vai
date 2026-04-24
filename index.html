@@ -140,7 +140,7 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
       </div>
     </div>
 
-    <<button id="start-btn">Tap to start camera</button>
+    <button id="start-btn">Tap to start camera</button>
 
     <div class="status-bar" id="status">
       <span class="status-dot" style="background:#ccc"></span>
@@ -342,13 +342,15 @@ function startDecoding() {
   hints.set(
     ZXing.DecodeHintType.POSSIBLE_FORMATS,
     [
-      ZXing.BarcodeFormat.133874145003,
-      ZXing.BarcodeFormat.cp2144901201,
-      ZXing.BarcodeFormat.CF2144901201,
-      ZXing.BarcodeFormat.7337786,
-      ZXing.BarcodeFormat.WO8793B16101,
-      ZXing.BarcodeFormat.COA039001801,
-      ZXing.BarcodeFormat.QR_CODE
+    ZXing.BarcodeFormat.CODE_128,
+    ZXing.BarcodeFormat.CODE_39,
+    ZXing.BarcodeFormat.CODE_93,
+    ZXing.BarcodeFormat.EAN_13,
+    ZXing.BarcodeFormat.EAN_8,
+    ZXing.BarcodeFormat.ITF,
+    ZXing.BarcodeFormat.UPC_A,
+    ZXing.BarcodeFormat.UPC_E,
+    ZXing.BarcodeFormat.QR_CODE
     ]
   );
 
