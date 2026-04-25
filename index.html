@@ -10,76 +10,50 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:system-ui,-apple-system,sans-serif;background:#f0f0ee;min-height:100vh}
 .app{max-width:640px;margin:0 auto;padding:12px}
-
 .header{padding:10px 0 14px;display:flex;align-items:center;justify-content:space-between}
 .header h1{font-size:18px;font-weight:600;color:#1a1a1a}
 .header .sub{font-size:12px;color:#999;margin-top:2px}
-
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
 .stat{background:#fff;border-radius:10px;padding:10px 12px}
 .stat-label{font-size:11px;color:#999;margin-bottom:3px}
 .stat-value{font-size:20px;font-weight:600;color:#1a1a1a;line-height:1}
-
 .card{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px}
-
 .tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;background:#f0f0ee;padding:4px;border-radius:10px}
 .tab{padding:9px;font-size:14px;border:none;border-radius:8px;background:transparent;cursor:pointer;color:#888;font-weight:500;transition:all 0.15s}
 .tab.active{background:#fff;color:#1a1a1a;box-shadow:0 1px 3px rgba(0,0,0,0.1)}
-
-#cam-wrap{position:relative;background:#000;border-radius:12px;overflow:hidden;width:100%;aspect-ratio:4/3;display:none}
-#cam-wrap.on{display:block}
-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-
-.overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
-.corner-box{position:relative;width:85%;max-width:420px;aspect-ratio:2.8}
-.corner-box::before,.corner-box::after,.corner-tl::before,.corner-tl::after{content:'';position:absolute;width:22px;height:22px;border-color:#fff;border-style:solid}
-.corner-box::before{top:0;left:0;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
-.corner-box::after{top:0;right:0;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
-.corner-tl::before{bottom:0;left:0;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
-.corner-tl::after{bottom:0;right:0;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
-.scan-line{position:absolute;left:5%;width:90%;height:2px;background:linear-gradient(90deg,transparent,#00e676,transparent);animation:sl 2s ease-in-out infinite}
-@keyframes sl{0%{top:10%}50%{top:88%}100%{top:10%}}
-.cam-hint{margin-top:16px;font-size:12px;color:rgba(255,255,255,0.7);background:rgba(0,0,0,0.4);padding:4px 12px;border-radius:20px}
-
 .status-bar{padding:10px 4px;font-size:13px;color:#666;min-height:38px;display:flex;align-items:center;gap:8px}
 .status-bar.ok{color:#2d7a3a;font-weight:500}
 .status-bar.err{color:#c0392b}
 .status-dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex-shrink:0}
-
 #start-btn{width:100%;padding:16px;font-size:16px;font-weight:600;background:#185fa5;color:#fff;border:none;border-radius:12px;cursor:pointer;margin-bottom:10px;letter-spacing:0.2px}
 #start-btn:active{opacity:0.85}
-
 .scanned-pill{background:#e8f5e9;border-radius:10px;padding:10px 14px;margin-bottom:10px;display:none}
 .scanned-pill.on{display:block}
 .scanned-pill-label{font-size:11px;color:#2d7a3a;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
 .scanned-pill-val{font-size:15px;font-family:monospace;color:#1a1a1a;word-break:break-all;line-height:1.4}
-
 .weight-block{display:none;margin-bottom:4px}
 .weight-block.on{display:block}
 .input-row{display:flex;gap:8px;align-items:stretch;margin-bottom:8px}
-.input-row input{flex:1;padding:13px 14px;font-size:16px;border:1.5px solid #e0e0e0;border-radius:10px;background:#fafafa;color:#1a1a1a;-webkit-appearance:none;appearance:none}
+.input-row input{flex:1;padding:13px 14px;font-size:16px;border:1.5px solid #e0e0e0;border-radius:10px;background:#fafafa;color:#1a1a1a;-webkit-appearance:none}
 .input-row input:focus{outline:none;border-color:#185fa5;background:#fff}
-.note-input{width:100%;padding:12px 14px;font-size:15px;border:1.5px solid #e0e0e0;border-radius:10px;background:#fafafa;color:#1a1a1a;margin-bottom:8px;-webkit-appearance:none;appearance:none}
+.note-input{width:100%;padding:12px 14px;font-size:15px;border:1.5px solid #e0e0e0;border-radius:10px;background:#fafafa;color:#1a1a1a;margin-bottom:8px;-webkit-appearance:none}
 .note-input:focus{outline:none;border-color:#185fa5;background:#fff}
 .btn-row{display:flex;gap:8px}
 .btn{padding:13px 18px;border-radius:10px;border:1.5px solid #e0e0e0;background:#fff;cursor:pointer;font-size:15px;color:#1a1a1a;font-weight:500;flex:1}
 .btn:active{opacity:0.75}
 .btn.primary{background:#185fa5;border-color:#185fa5;color:#fff}
 .btn.ghost{flex:0 0 auto;background:#fafafa}
-
 .manual-block{display:none}
 .manual-block.on{display:block}
 .field-label{font-size:12px;color:#888;margin-bottom:5px;font-weight:500}
 .field-wrap{margin-bottom:10px}
-.full-input{width:100%;padding:13px 14px;font-size:16px;border:1.5px solid #e0e0e0;border-radius:10px;background:#fafafa;color:#1a1a1a;-webkit-appearance:none;appearance:none}
+.full-input{width:100%;padding:13px 14px;font-size:16px;border:1.5px solid #e0e0e0;border-radius:10px;background:#fafafa;color:#1a1a1a;-webkit-appearance:none}
 .full-input:focus{outline:none;border-color:#185fa5;background:#fff}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-
 .records-card{background:#fff;border-radius:14px;overflow:hidden;margin-bottom:12px}
 .records-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #f0f0ee}
 .records-head h2{font-size:15px;font-weight:600;color:#1a1a1a}
 .clear-btn{padding:6px 12px;font-size:12px;border:1.5px solid #ffd0d0;border-radius:8px;background:#fff8f8;color:#c0392b;cursor:pointer;font-weight:500}
-
 .record-item{display:flex;align-items:flex-start;padding:12px 16px;border-bottom:1px solid #f5f5f5;gap:10px}
 .record-item:last-child{border-bottom:none}
 .record-num{font-size:12px;color:#bbb;font-weight:600;min-width:22px;margin-top:2px}
@@ -97,16 +71,13 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .record-time{font-size:11px;color:#bbb}
 .del-btn{background:none;border:none;color:#ddd;font-size:18px;cursor:pointer;padding:2px 4px;line-height:1;margin-top:2px}
 .del-btn:active{color:#c0392b}
-
 .empty-state{padding:40px 20px;text-align:center;color:#bbb;font-size:14px}
-
 .export-card{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px}
 .export-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
 .export-btn{padding:14px 10px;border-radius:10px;border:1.5px solid #e0e0e0;background:#fafafa;cursor:pointer;font-size:13px;font-weight:600;color:#1a1a1a;text-align:center;line-height:1.3}
 .export-btn:active{background:#e8f0fe}
 .export-btn .icon{font-size:20px;display:block;margin-bottom:4px}
 .export-btn.full{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px}
-
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(30,30,30,0.92);color:#fff;padding:10px 20px;border-radius:24px;font-size:14px;font-weight:500;transition:transform 0.25s ease;z-index:9999;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
 .toast.show{transform:translateX(-50%) translateY(0)}
 </style>
@@ -131,17 +102,11 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
       <button class="tab active" onclick="setMode('camera')">Camera scan</button>
       <button class="tab" onclick="setMode('manual')">Manual entry</button>
     </div>
-  <div id="scan-block">
-  
-<button
-  id="start-btn"
-  class="btn primary"
-  style="width:100%;padding:14px;margin-bottom:10px"
-  onclick="openZXingScanner()"
->
-  Scan Barcode
-</button>
-</div>
+
+    <div id="scan-block">
+      <button id="start-btn" onclick="openZXingScanner()">Scan Barcode</button>
+    </div>
+
     <div class="status-bar" id="status">
       <span class="status-dot" style="background:#ccc"></span>
       <span id="status-txt">Tap button, then scan using Barcode Scanner app</span>
@@ -154,9 +119,11 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
     <div class="weight-block" id="wblock">
       <div class="input-row">
-        <input type="number" id="w-input" placeholder="Weight (kg)" step="0.01" min="0" inputmode="decimal" onkeydown="if(event.key==='Enter')document.getElementById('note-cam').focus()">
+        <input type="number" id="w-input" placeholder="Weight (kg)" step="0.01" min="0" inputmode="decimal"
+          onkeydown="if(event.key==='Enter')document.getElementById('note-cam').focus()">
       </div>
-      <input class="note-input" type="text" id="note-cam" placeholder="Note (optional)" onkeydown="if(event.key==='Enter')confirmEntry()">
+      <input class="note-input" type="text" id="note-cam" placeholder="Note (optional)"
+        onkeydown="if(event.key==='Enter')confirmEntry()">
       <div class="btn-row">
         <button class="btn primary" onclick="confirmEntry()">Add record</button>
         <button class="btn ghost" onclick="cancelScan()">Cancel</button>
@@ -166,12 +133,14 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
     <div class="manual-block" id="mblock">
       <div class="field-wrap">
         <div class="field-label">Barcode / QR code</div>
-        <input class="full-input" type="text" id="m-bc" placeholder="Type or paste code" onkeydown="if(event.key==='Enter')document.getElementById('m-wt').focus()">
+        <input class="full-input" type="text" id="m-bc" placeholder="Type or paste code"
+          onkeydown="if(event.key==='Enter')document.getElementById('m-wt').focus()">
       </div>
       <div class="two-col">
         <div class="field-wrap">
           <div class="field-label">Weight (kg)</div>
-          <input class="full-input" type="number" id="m-wt" placeholder="0.00" step="0.01" min="0" inputmode="decimal" onkeydown="if(event.key==='Enter')document.getElementById('m-note').focus()">
+          <input class="full-input" type="number" id="m-wt" placeholder="0.00" step="0.01" min="0" inputmode="decimal"
+            onkeydown="if(event.key==='Enter')document.getElementById('m-note').focus()">
         </div>
         <div class="field-wrap">
           <div class="field-label">Yards (auto)</div>
@@ -180,7 +149,8 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
       </div>
       <div class="field-wrap">
         <div class="field-label">Note (optional)</div>
-        <input class="full-input" type="text" id="m-note" placeholder="e.g. damaged, priority..." onkeydown="if(event.key==='Enter')addManual()">
+        <input class="full-input" type="text" id="m-note" placeholder="e.g. damaged, priority..."
+          onkeydown="if(event.key==='Enter')addManual()">
       </div>
       <button class="btn primary" style="width:100%;padding:14px" onclick="addManual()">Add record</button>
     </div>
@@ -207,184 +177,193 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
 <script>
 const FACTOR = 3.5;
-let records = JSON.parse(
-  localStorage.getItem("scan_records") || "[]"
-);
+const STORAGE_KEY = 'scan_records';
 
-records = records.map(r => ({
-  id: r.id || Date.now(),
-  barcode: String(r.barcode || ""),
-  type: r.type || "Barcode",
-  weight: parseFloat(r.weight) || 0,
-  yards: parseFloat(r.yards) || 0,
-  note: r.note || "",
-  time: r.time ? new Date(r.time) : new Date()
-}));
-
-records = records.filter(r =>
-  r.barcode &&
-  r.weight > 0 &&
-  r.yards > 0 &&
-  !isNaN(r.time.getTime())
-);
-  
-let pending = null;
-let pendingType = null;
-let reader = null;
-let cooldown = false;
-let mode = 'camera';
-let stream = null;
-
-document.getElementById('m-wt').addEventListener('input', function(){
-  const v = parseFloat(this.value);
-  document.getElementById('m-yards-preview').value = isNaN(v)||v<=0 ? '—' : (v*FACTOR).toFixed(2)+' yds';
-});
-
-function saveRecords() {
-  localStorage.setItem("scan_records", JSON.stringify(records));
+// ── helpers ──────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
 }
-  
-function openZXingScanner() {
-  setStatus("green", "Opening Barcode Scanner app...");
 
-  window.location.href =
-    "intent://scan/?ret=" +
-    encodeURIComponent(
-      "https://letongo131-hue.github.io/Scan-Tra-Vai/?SCAN_RESULT={CODE}"
-    ) +
-    "#Intent;" +
-    "scheme=zxing;" +
-    "package=com.google.zxing.client.android;" +
-    "S.SCAN_MODE=PRODUCT_MODE;" +
-    "end";
-}
-  
-function processScan(scannedCode) {
-  const code = (scannedCode || "").trim();
-
-  if (!code) {
-    toast("No barcode detected");
-    return;
-  }
-
-  handleScan(code, "Barcode");
-}
-  
-function setMode(m) {
-  mode = m;
-  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',(i===0)===(m==='camera')));
-  document.getElementById('mblock').classList.toggle('on', m==='manual');
- if(m==='manual'){
-    document.getElementById('scan-block').style.display='none';
-    setStatus('','');
-    setTimeout(()=>document.getElementById('m-bc').focus(),100);
-  } else {
-    document.getElementById('scan-block').style.display='block';
-    setStatus('gray','Press button to activate camera');
-  }
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2500);
 }
 
 function setStatus(color, txt) {
   const bar = document.getElementById('status');
   const dot = bar.querySelector('.status-dot');
-  bar.className = 'status-bar' + (color==='green'?' ok':color==='red'?' err':'');
-  dot.style.background = color==='green'?'#2d7a3a':color==='red'?'#c0392b':'#ccc';
+  bar.className = 'status-bar' + (color==='green' ? ' ok' : color==='red' ? ' err' : '');
+  dot.style.background = color==='green' ? '#2d7a3a' : color==='red' ? '#c0392b' : '#ccc';
   document.getElementById('status-txt').textContent = txt;
 }
 
+// ── storage ───────────────────────────────────────────────────────────
+function loadRecords() {
+  try {
+    return (JSON.parse(localStorage.getItem(STORAGE_KEY)) || [])
+      .map(r => ({
+        id:      r.id      || Date.now(),
+        barcode: String(r.barcode || ''),
+        type:    r.type    || 'Barcode',
+        weight:  parseFloat(r.weight) || 0,
+        yards:   parseFloat(r.yards)  || 0,
+        note:    r.note    || '',
+        time:    new Date(r.time)
+      }))
+      .filter(r => r.barcode && r.weight > 0 && r.yards > 0 && !isNaN(r.time.getTime()));
+  } catch { return []; }
+}
+
+function saveRecords() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+}
+
+let records = loadRecords();
+
+// ── pending scan state ────────────────────────────────────────────────
+let pending     = null;
+let pendingType = null;
+let mode        = 'camera';
+
+// ── mode / tab ────────────────────────────────────────────────────────
+function setMode(m) {
+  mode = m;
+  const isCam = m === 'camera';
+  document.querySelectorAll('.tab').forEach((b, i) =>
+    b.classList.toggle('active', i === 0 ? isCam : !isCam)
+  );
+
+  // FIX: clear any in-progress scan when leaving camera tab
+  if (!isCam) cancelScan();
+
+  document.getElementById('scan-block').style.display = isCam ? 'block' : 'none';
+  document.getElementById('mblock').classList.toggle('on', !isCam);
+
+  if (!isCam) {
+    setStatus('', '');
+    setTimeout(() => document.getElementById('m-bc').focus(), 100);
+  } else {
+    setStatus('gray', 'Press button to activate camera');
+  }
+}
+
+// ── scanner ───────────────────────────────────────────────────────────
+function openZXingScanner() {
+  setStatus('green', 'Opening Barcode Scanner app…');
+  window.location.href =
+    'intent://scan/?ret=' +
+    encodeURIComponent(
+      'https://letongo131-hue.github.io/Scan-Tra-Vai/?SCAN_RESULT={CODE}'
+    ) +
+    '#Intent;scheme=zxing;package=com.google.zxing.client.android;S.SCAN_MODE=PRODUCT_MODE;end';
+}
+
+function processScan(code) {
+  code = (code || '').trim();
+  if (!code) { toast('No barcode detected'); return; }
+  handleScan(code, 'Barcode');
+}
+
 function handleScan(text, type) {
-  pending = text; pendingType = type;
+  pending     = text;
+  pendingType = type;
   document.getElementById('pill-val').textContent = text;
   document.getElementById('pill').classList.add('on');
   document.getElementById('wblock').classList.add('on');
-  setStatus('green', type+' detected — enter weight');
-  setTimeout(()=>document.getElementById('w-input').focus(), 100);
-  toast('Scanned: '+text.substring(0,40));
+  setStatus('green', type + ' detected — enter weight');
+  setTimeout(() => document.getElementById('w-input').focus(), 100);
+  toast('Scanned: ' + text.substring(0, 40));
 }
 
 function confirmEntry() {
-  const w = parseFloat(document.getElementById('w-input').value);
+  if (!pending) { toast('Scan a code first'); return; }
+  const w    = parseFloat(document.getElementById('w-input').value);
   const note = document.getElementById('note-cam').value.trim();
-  if(!pending){ toast('Scan a code first'); return; }
-  if(isNaN(w)||w<=0){ toast('Enter a valid weight'); document.getElementById('w-input').focus(); return; }
-  addRecord(pending, pendingType||'Barcode', w, note);
+  if (isNaN(w) || w <= 0) { toast('Enter a valid weight'); document.getElementById('w-input').focus(); return; }
+  addRecord(pending, pendingType || 'Barcode', w, note);
   cancelScan();
 }
 
 function cancelScan() {
-  pending=null; pendingType=null;
+  pending     = null;
+  pendingType = null;
   document.getElementById('pill').classList.remove('on');
   document.getElementById('wblock').classList.remove('on');
-  document.getElementById('w-input').value='';
-  document.getElementById('note-cam').value='';
-  setStatus('green','Ready — point at barcode or QR code');
+  document.getElementById('w-input').value  = '';
+  document.getElementById('note-cam').value = '';
+  setStatus('green', 'Ready — point at barcode or QR code');
 }
 
+// ── manual entry ──────────────────────────────────────────────────────
+document.getElementById('m-wt').addEventListener('input', function () {
+  const v = parseFloat(this.value);
+  document.getElementById('m-yards-preview').value =
+    isNaN(v) || v <= 0 ? '—' : (v * FACTOR).toFixed(2) + ' yds';
+});
+
 function addManual() {
-  const bc = document.getElementById('m-bc').value.trim();
-  const w = parseFloat(document.getElementById('m-wt').value);
+  const bc   = document.getElementById('m-bc').value.trim();
+  const w    = parseFloat(document.getElementById('m-wt').value);
   const note = document.getElementById('m-note').value.trim();
-  if(!bc){ toast('Enter a barcode'); document.getElementById('m-bc').focus(); return; }
-  if(isNaN(w)||w<=0){ toast('Enter a valid weight'); document.getElementById('m-wt').focus(); return; }
-  addRecord(bc,'Manual',w,note);
-  document.getElementById('m-bc').value='';
-  document.getElementById('m-wt').value='';
-  document.getElementById('m-note').value='';
-  document.getElementById('m-yards-preview').value='—';
+  if (!bc)           { toast('Enter a barcode');        document.getElementById('m-bc').focus(); return; }
+  if (isNaN(w)||w<=0){ toast('Enter a valid weight');   document.getElementById('m-wt').focus(); return; }
+  addRecord(bc, 'Manual', w, note);
+  ['m-bc','m-wt','m-note'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('m-yards-preview').value = '—';
   document.getElementById('m-bc').focus();
 }
 
-function addRecord(barcode,type,weight,note=''){
+// ── records CRUD ──────────────────────────────────────────────────────
+function addRecord(barcode, type, weight, note = '') {
   const yards = parseFloat((weight * FACTOR).toFixed(2));
-
-  records.unshift({
-    id: Date.now(),
-    barcode,
-    type,
-    weight,
-    yards,
-    note,
-    time: new Date()
-  });
-
-  saveRecords();   // ADD THIS
-
+  records.unshift({ id: Date.now(), barcode, type, weight, yards, note, time: new Date() });
+  saveRecords();
   renderRecords();
   updateStats();
-
   toast('Added — ' + yards.toFixed(2) + ' yds');
 }
 
-function deleteRecord(id){
+function deleteRecord(id) {
   records = records.filter(r => r.id !== id);
   saveRecords();
   renderRecords();
   updateStats();
 }
 
-function clearAll(){
-  if(!records.length) return;
-  if(!confirm('Clear all ' + records.length + ' records?')) return;
+function clearAll() {
+  if (!records.length) return;
+  if (!confirm('Clear all ' + records.length + ' records?')) return;
   records = [];
   saveRecords();
   renderRecords();
   updateStats();
 }
 
-function renderRecords(){
-  const el=document.getElementById('records-list');
-  document.getElementById('rec-count-badge').textContent=records.length?'('+records.length+')':'';
-  if(!records.length){ el.innerHTML='<div class="empty-state">No scans yet</div>'; return; }
-  el.innerHTML=records.map((r,i)=>`
+// ── render ────────────────────────────────────────────────────────────
+function renderRecords() {
+  const el = document.getElementById('records-list');
+  document.getElementById('rec-count-badge').textContent =
+    records.length ? '(' + records.length + ')' : '';
+  if (!records.length) {
+    el.innerHTML = '<div class="empty-state">No scans yet</div>';
+    return;
+  }
+  el.innerHTML = records.map((r, i) => `
     <div class="record-item">
-      <div class="record-num">${records.length-i}</div>
+      <div class="record-num">${records.length - i}</div>
       <div class="record-main">
         <div class="record-barcode">${esc(r.barcode)}</div>
         <div class="record-meta">
           <span class="badge ${r.type==='QR'?'bqr':r.type==='Manual'?'bman':'bbar'}">${r.type}</span>
           <span style="font-size:12px;color:#999">${new Date(r.time).toLocaleTimeString()}</span>
         </div>
-        ${r.note?`<div class="record-note">${esc(r.note)}</div>`:''}
+        ${r.note ? `<div class="record-note">${esc(r.note)}</div>` : ''}
       </div>
       <div class="record-right">
         <div class="record-yards">${r.yards.toFixed(2)} yds</div>
@@ -394,88 +373,85 @@ function renderRecords(){
     </div>`).join('');
 }
 
-function updateStats(){
-  const totalWeight = records.reduce(
-    (sum, r) => sum + Number(r.weight || 0),
-    0
-  );
-
-  const totalYards = records.reduce(
-    (sum, r) => sum + Number(r.yards || 0),
-    0
-  );
-
-  document.getElementById('s-count').textContent = records.length;
+function updateStats() {
+  const totalWeight = records.reduce((s, r) => s + r.weight, 0);
+  const totalYards  = records.reduce((s, r) => s + r.yards,  0);
+  document.getElementById('s-count').textContent  = records.length;
   document.getElementById('s-weight').textContent = totalWeight.toFixed(2);
-  document.getElementById('s-yards').textContent = totalYards.toFixed(2);
+  document.getElementById('s-yards').textContent  = totalYards.toFixed(2);
 }
 
-function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-function exportCSV(){
-  if(!records.length){ toast('No data to export'); return; }
-  const rows=[['#','Barcode','Type','Weight (kg)','Yards','Note','Time']];
-  records.forEach((r,i)=>rows.push([records.length-i,r.barcode,r.type,r.weight.toFixed(2),r.yards.toFixed(2),r.note||'',r.time.toLocaleString()]));
-  const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));
-  a.download='ScanLog_'+new Date().toISOString().slice(0,16).replace(/[T:]/g,'-')+'.csv';
+// ── export ────────────────────────────────────────────────────────────
+function exportCSV() {
+  if (!records.length) { toast('No data to export'); return; }
+  const rows = [['#','Barcode','Type','Weight (kg)','Yards','Note','Time']];
+  records.forEach((r, i) =>
+    rows.push([records.length-i, r.barcode, r.type,
+      r.weight.toFixed(2), r.yards.toFixed(2), r.note||'',
+      new Date(r.time).toLocaleString()])
+  );
+  const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g,'""') + '"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8'}));
+  a.download = 'ScanLog_' + new Date().toISOString().slice(0,16).replace(/[T:]/g,'-') + '.csv';
   a.click();
   toast('CSV downloaded');
 }
 
-function printLog(){
-  if(!records.length){ toast('No data'); return; }
-  const tw=records.reduce((s,r)=>s+r.weight,0);
-  const ty=records.reduce((s,r)=>s+r.yards,0);
-  const rows=records.map((r,i)=>`<tr><td>${records.length-i}</td><td style="font-family:monospace;font-size:12px">${esc(r.barcode)}</td><td>${r.type}</td><td>${r.weight.toFixed(2)}</td><td><b>${r.yards.toFixed(2)}</b></td><td style="color:#777;font-size:12px">${esc(r.note||'')}</td><td style="color:#999;font-size:11px">${new Date(r.time).toLocaleTimeString()}</td></tr>`).join('');
-  const w=window.open('','_blank');
-  w.document.write(`<!DOCTYPE html><html><head><title>Scan Log</title><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;padding:20px;font-size:13px}h2{margin-bottom:4px;font-size:16px}.meta{color:#888;font-size:12px;margin-bottom:16px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ddd;padding:7px 9px;text-align:left}th{background:#f5f5f5;font-weight:600;font-size:12px}.totals{margin-top:14px;font-size:13px;padding:10px;background:#f9f9f9;border-radius:6px}@media print{.no-print{display:none}}</style></head><body><h2>Scan Log</h2><div class="meta">Exported: ${new Date().toLocaleString()}</div><table><thead><tr><th>#</th><th>Barcode/QR</th><th>Type</th><th>Weight(kg)</th><th>Yards</th><th>Note</th><th>Time</th></tr></thead><tbody>${rows}</tbody></table><div class="totals"><b>Total items:</b> ${records.length} &nbsp;&nbsp; <b>Total weight:</b> ${tw.toFixed(2)} kg &nbsp;&nbsp; <b>Total yards:</b> ${ty.toFixed(2)}</div></body></html>`);
+function printLog() {
+  if (!records.length) { toast('No data'); return; }
+  const tw   = records.reduce((s,r) => s+r.weight, 0);
+  const ty   = records.reduce((s,r) => s+r.yards,  0);
+  const rows = records.map((r,i) =>
+    `<tr><td>${records.length-i}</td><td style="font-family:monospace;font-size:12px">${esc(r.barcode)}</td>
+     <td>${r.type}</td><td>${r.weight.toFixed(2)}</td><td><b>${r.yards.toFixed(2)}</b></td>
+     <td style="color:#777;font-size:12px">${esc(r.note||'')}</td>
+     <td style="color:#999;font-size:11px">${new Date(r.time).toLocaleTimeString()}</td></tr>`
+  ).join('');
+  const w = window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><title>Scan Log</title><meta charset="UTF-8">
+    <style>body{font-family:Arial,sans-serif;padding:20px;font-size:13px}h2{margin-bottom:4px;font-size:16px}
+    .meta{color:#888;font-size:12px;margin-bottom:16px}table{width:100%;border-collapse:collapse}
+    th,td{border:1px solid #ddd;padding:7px 9px;text-align:left}th{background:#f5f5f5;font-weight:600;font-size:12px}
+    .totals{margin-top:14px;font-size:13px;padding:10px;background:#f9f9f9;border-radius:6px}</style>
+    </head><body><h2>Scan Log</h2><div class="meta">Exported: ${new Date().toLocaleString()}</div>
+    <table><thead><tr><th>#</th><th>Barcode/QR</th><th>Type</th><th>Weight(kg)</th><th>Yards</th><th>Note</th><th>Time</th></tr></thead>
+    <tbody>${rows}</tbody></table>
+    <div class="totals"><b>Total items:</b> ${records.length} &nbsp;&nbsp;
+    <b>Total weight:</b> ${tw.toFixed(2)} kg &nbsp;&nbsp; <b>Total yards:</b> ${ty.toFixed(2)}</div>
+    </body></html>`);
   w.document.close();
-  setTimeout(()=>w.print(),500);
+  setTimeout(() => w.print(), 500);
 }
 
-function copyEmail(){
-  if(!records.length){ toast('No data'); return; }
-  const tw=records.reduce((s,r)=>s+r.weight,0);
-  const ty=records.reduce((s,r)=>s+r.yards,0);
-  let t=`SCAN LOG — ${new Date().toLocaleString()}\n`;
-  t+=`${'─'.repeat(48)}\n`;
-  t+=`Items: ${records.length}  |  Weight: ${tw.toFixed(2)} kg  |  Yards: ${ty.toFixed(2)}\n`;
-  t+=`${'─'.repeat(48)}\n\n`;
-  records.forEach((r,i)=>{
-    t+=`${String(records.length-i).padStart(3)}. ${r.barcode}\n`;
-    t+=`     ${r.weight.toFixed(2)} kg → ${r.yards.toFixed(2)} yds`;
-    if(r.note) t+=`  [${r.note}]`;
-    t+=`  ${new Date(r.time).toLocaleTimeString()}\n`;
+function copyEmail() {
+  if (!records.length) { toast('No data'); return; }
+  const tw = records.reduce((s,r) => s+r.weight, 0);
+  const ty = records.reduce((s,r) => s+r.yards,  0);
+  const sep = '─'.repeat(48);
+  let t = `SCAN LOG — ${new Date().toLocaleString()}\n${sep}\n`;
+  t += `Items: ${records.length}  |  Weight: ${tw.toFixed(2)} kg  |  Yards: ${ty.toFixed(2)}\n${sep}\n\n`;
+  records.forEach((r, i) => {
+    t += `${String(records.length-i).padStart(3)}. ${r.barcode}\n`;
+    t += `     ${r.weight.toFixed(2)} kg → ${r.yards.toFixed(2)} yds`;
+    if (r.note) t += `  [${r.note}]`;
+    t += `  ${new Date(r.time).toLocaleTimeString()}\n`;
   });
   navigator.clipboard.writeText(t)
-    .then(()=>toast('Copied — paste into email or Teams'))
-    .catch(()=>toast('Copy failed — try selecting text manually'));
+    .then(()  => toast('Copied — paste into email or Teams'))
+    .catch(()  => toast('Copy failed — try selecting text manually'));
 }
 
-function toast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2500);
-}
-  
-    window.addEventListener("load", function () {
-  const fullUrl = window.location.href;
-
-  let scannedCode = "";
-
-  if (fullUrl.includes("SCAN_RESULT=")) {
-    scannedCode = decodeURIComponent(
-      fullUrl.split("SCAN_RESULT=")[1].split("&")[0]
-    );
-  }
-
+// ── init ──────────────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  const params = new URLSearchParams(window.location.search);
+  const scannedCode = params.get('SCAN_RESULT') || '';
   if (scannedCode) {
     processScan(scannedCode);
-    setStatus("green", "Barcode scanned successfully");
+    setStatus('green', 'Barcode scanned successfully');
   }
 });
+
 renderRecords();
 updateStats();
 </script>
