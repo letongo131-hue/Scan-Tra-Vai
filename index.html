@@ -449,6 +449,8 @@ window.addEventListener('load', () => {
   if (scannedCode) {
     processScan(scannedCode);
     setStatus('green', 'Barcode scanned successfully');
+    // ✅ Remove the param from URL so reload doesn't re-trigger it
+    history.replaceState(null, '', window.location.pathname);
   }
 });
 
